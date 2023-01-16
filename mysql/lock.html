@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Lock(锁) | djzzwx的吃灰系列</title>
+    <meta name="generator" content="VuePress 1.9.7">
+    
+    <meta name="description" content="Just a description">
+    
+    <link rel="preload" href="/assets/css/0.styles.e4d8b86b.css" as="style"><link rel="preload" href="/assets/js/app.6409024b.js" as="script"><link rel="preload" href="/assets/js/2.67153f4d.js" as="script"><link rel="preload" href="/assets/js/21.9261f599.js" as="script"><link rel="prefetch" href="/assets/js/10.020fc9bc.js"><link rel="prefetch" href="/assets/js/11.a654da16.js"><link rel="prefetch" href="/assets/js/12.0263d9b4.js"><link rel="prefetch" href="/assets/js/13.028acb64.js"><link rel="prefetch" href="/assets/js/14.168acbc4.js"><link rel="prefetch" href="/assets/js/15.4bf97cd3.js"><link rel="prefetch" href="/assets/js/16.23347fe3.js"><link rel="prefetch" href="/assets/js/17.a95e5a09.js"><link rel="prefetch" href="/assets/js/18.a253c430.js"><link rel="prefetch" href="/assets/js/19.566eec95.js"><link rel="prefetch" href="/assets/js/20.520dc042.js"><link rel="prefetch" href="/assets/js/22.d1c70641.js"><link rel="prefetch" href="/assets/js/23.912473fe.js"><link rel="prefetch" href="/assets/js/24.b595ad37.js"><link rel="prefetch" href="/assets/js/25.aac092d3.js"><link rel="prefetch" href="/assets/js/3.90c514d0.js"><link rel="prefetch" href="/assets/js/4.bc7cf726.js"><link rel="prefetch" href="/assets/js/5.d250cb53.js"><link rel="prefetch" href="/assets/js/6.8779df89.js"><link rel="prefetch" href="/assets/js/7.d9d133a5.js"><link rel="prefetch" href="/assets/js/8.15ff2bc7.js"><link rel="prefetch" href="/assets/js/9.4a3da7fc.js">
+    <link rel="stylesheet" href="/assets/css/0.styles.e4d8b86b.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/" class="home-link router-link-active"><!----> <span class="site-name">djzzwx的吃灰系列</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <!----></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><!---->  <ul class="sidebar-links"><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>php</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>leetcode</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading open"><span>mysql</span> <span class="arrow down"></span></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/mysql/engine.html" class="sidebar-link">MyISAM vs Innodb</a></li><li><a href="/mysql/lock.html" aria-current="page" class="active sidebar-link">Lock(锁)</a><ul class="sidebar-sub-headers"></ul></li><li><a href="/mysql/transaction.html" class="sidebar-link">事务(transaction)</a></li></ul></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="lock-锁"><a href="#lock-锁" class="header-anchor">#</a> Lock(锁)</h1> <h3 id="认识"><a href="#认识" class="header-anchor">#</a> 认识</h3> <ol><li><p>解释</p> <div class="language-tex extra-class"><pre class="language-tex"><code>计算机协调多个进程或线程并发访问某一资源的机制。
+</code></pre></div></li> <li><p>重要性</p> <div class="language-tex extra-class"><pre class="language-tex"><code>在数据库中，除传统计算资源（CPU、RAM、I<span class="token function selector">\O</span>等）的争抢，数据也是一种供多用户共享的资源。
+如何保证数据并发访问的一致性，有效性，是所有数据库必须要解决的问题。
+锁冲突也是影响数据库并发访问性能的一个重要因素，因此锁对数据库尤其重要。
+</code></pre></div></li> <li><p>缺点</p> <div class="language-tex extra-class"><pre class="language-tex"><code>加锁是消耗资源的，锁的各种操作，包括获得锁、检测锁是否已解除、释放锁等 ，都会增加系统的开销。
+</code></pre></div></li></ol> <h3 id="类型"><a href="#类型" class="header-anchor">#</a> 类型</h3> <table><thead><tr><th style="text-align:center;"></th> <th style="text-align:center;">表锁</th> <th style="text-align:center;">行锁</th></tr></thead> <tbody><tr><td style="text-align:center;">种类</td> <td style="text-align:center;">读锁（read lock | shared lock）针对同一份数据，多个读操作同时进行互不影响<br>写锁（write lock | exclusive lock）当前操作未完成之前会阻塞其他操作</td> <td style="text-align:center;">读锁（read lock|shared lock）允许一个事务去读一行，阻止其他事务获得相同数据集的排他锁<br>写锁（write lock|exclusive lock）允许获得排他锁的事务更新数据，阻止其他事务取得相同数据集的共享锁和排他锁<br>意向共享锁（IS）一个事务给一个数据行加共享锁时，必须先获得表的IS锁<br>意向排他锁（IX）一个事务给一个数据行加排他锁时，必须先获得表的IX锁</td></tr> <tr><td style="text-align:center;">存储引擎默认锁</td> <td style="text-align:center;">MyISAM</td> <td style="text-align:center;">Innodb</td></tr> <tr><td style="text-align:center;">特点</td> <td style="text-align:center;">对整张表加锁<br>开销小<br>加锁快<br>无死锁<br>锁粒度大，锁冲突概率大，并发性低</td> <td style="text-align:center;">对一行数据加锁<br>开销大<br>加锁慢<br>有死锁<br>锁粒度小，锁冲突概率小，并发性高</td></tr></tbody></table> <h3 id="innodb-锁模式"><a href="#innodb-锁模式" class="header-anchor">#</a> InnoDB 锁模式</h3> <ol><li><p>InnoDB实现了两种模式的<strong>行锁</strong>：</p> <ul><li>共享锁（s）：允许一个事务读取一行，阻止其他事务获取相同数据集的排他锁。</li> <li>排他锁（x）：允许获得排他锁的事务更新数据，阻止其他事务获取相同数据集的共享读锁和排他写锁。</li></ul></li> <li><p>为了表锁行锁共存，实现多粒度锁机制，InnoDB还有两种内部使用的意向锁（Intention Locks），意向锁都是表锁：</p> <ul><li>意向共享锁（IS）：事务打算给数据行加共享锁，必须先获得该表的 IS 锁。</li> <li>意向排他锁（IX）：事务打算给数据行加排他锁，必须先获取该表的 IX 锁。</li></ul></li> <li><p>锁模式兼容性：</p> <table><thead><tr><th style="text-align:center;">---</th> <th style="text-align:center;">X</th> <th style="text-align:center;">IX</th> <th style="text-align:center;">S</th> <th style="text-align:center;">IS</th></tr></thead> <tbody><tr><td style="text-align:center;">X</td> <td style="text-align:center;">冲突</td> <td style="text-align:center;">冲突</td> <td style="text-align:center;">冲突</td> <td style="text-align:center;">冲突</td></tr> <tr><td style="text-align:center;">IX</td> <td style="text-align:center;">冲突</td> <td style="text-align:center;">兼容</td> <td style="text-align:center;">冲突</td> <td style="text-align:center;">兼容</td></tr> <tr><td style="text-align:center;">S</td> <td style="text-align:center;">冲突</td> <td style="text-align:center;">冲突</td> <td style="text-align:center;">兼容</td> <td style="text-align:center;">兼容</td></tr> <tr><td style="text-align:center;">IS</td> <td style="text-align:center;">冲突</td> <td style="text-align:center;">兼容</td> <td style="text-align:center;">兼容</td> <td style="text-align:center;">兼容</td></tr></tbody></table> <p>注：列为当前锁，行为请求锁。</p></li></ol> <h3 id="行锁的实现算法"><a href="#行锁的实现算法" class="header-anchor">#</a> 行锁的实现算法</h3> <ol><li><p>Record Lock 单行记录上的锁</p> <div class="language- extra-class"><pre class="language-text"><code>Record Lock 总是会去锁住索引记录，如果InnoDB引擎表建立的时候没有设置任何一个索引，那么存储引擎会使用隐式的主键进行锁定。
+</code></pre></div></li> <li><p>Gap Lock 锁</p> <div class="language- extra-class"><pre class="language-text"><code>当我们用范围条件而不是相等条件检索数据，并请求共享或排他锁时，InnoDB会给符合条件的已有数据记录的索引加锁，对于键值在条件范围内但并不存在的记录也会加锁。
+
+优点：解决了事务并发的幻读问题
+不足：因为query执行过程中通过范围查找的话，他会锁定争个范围内所有的索引键值，即使这个键值并不存在。
+间隙锁有一个致命的弱点，就是当锁定一个范围键值之后，即使某些不存在的键值也会被无辜的锁定，而造成锁定的时候无法插入锁定键值范围内任何数据。在某些场景下这可能会对性能造成很大的危害。
+</code></pre></div></li> <li><p>Next-key Lock 锁</p> <div class="language- extra-class"><pre class="language-text"><code>同时锁住数据+间隙锁
+在Repeatable Read隔离级别下，Next-key Lock 算法是默认的行记录锁定算法。
+</code></pre></div><p><strong>行锁tips</strong></p> <div class="language- extra-class"><pre class="language-text"><code>1. 只有通过索引条件检索数据时，InnoDB才会使用行级锁，否则会使用表级锁(索引失效，行锁变表锁)
+2. 即使是访问不同行的记录，如果使用的是相同的索引键，会发生锁冲突
+3. 如果数据表建有多个索引时，可以通过不同的索引锁定不同的行
+</code></pre></div></li></ol> <h3 id="死锁"><a href="#死锁" class="header-anchor">#</a> 死锁</h3> <ol><li><p>解释</p> <div class="language- extra-class"><pre class="language-text"><code>指两个或者多个事务在同一资源上相互占用，并请求锁定对方占用的资源，从而导致恶性循环的现象
+</code></pre></div></li> <li><p>产生条件</p> <div class="language- extra-class"><pre class="language-text"><code>1. 互斥条件：一个资源每次只能被一个进程使用
+2. 请求与保持条件：一个进程因请求资源而阻塞时，对已获得的资源保持不放
+3. 不剥夺条件：进程已获得的资源，在没有使用完之前，不能强行剥夺
+4. 循环等待条件：多个进程之间形成的一种互相循环等待的资源的关系
+</code></pre></div></li> <li><p>解决</p> <div class="language- extra-class"><pre class="language-text"><code>1. 查看死锁：show engine innodb status \G
+2. 自动检测机制，超时自动回滚代价较小的事务（innodb_lock_wait_timeout 默认50s）
+3. 人为解决，kill阻塞进程（show processlist）
+4. wait for graph 等待图（主动检测）
+</code></pre></div></li> <li><p>如何避免</p> <div class="language- extra-class"><pre class="language-text"><code>1. 加锁顺序一致，尽可能一次性锁定所需的数据行
+2. 尽量基于primary（主键）或unique key更新数据
+3. 单次操作数据量不宜过多，涉及表尽量少
+4. 减少表上索引，减少锁定资源
+5. 尽量使用较低的隔离级别
+6. 尽量使用相同条件访问数据，这样可以避免间隙锁对并发的插入影响
+7. 精心设计索引，尽量使用索引访问数据
+</code></pre></div></li></ol> <h3 id="乐观锁和悲观锁"><a href="#乐观锁和悲观锁" class="header-anchor">#</a> 乐观锁和悲观锁</h3> <table><thead><tr><th style="text-align:center;"></th> <th style="text-align:center;">悲观锁</th> <th style="text-align:center;">乐观锁</th></tr></thead> <tbody><tr><td style="text-align:center;">概念</td> <td style="text-align:center;">假定会发生并发冲突，屏蔽一切可能违反数据完整性的操作</td> <td style="text-align:center;">假设不会发生并发冲突，只在提交操作时检查是否违反数据完整性</td></tr> <tr><td style="text-align:center;">实现机制</td> <td style="text-align:center;">查询时直接锁住记录使其他事务不能查询和更新</td> <td style="text-align:center;">提交更新时检查版本或时间戳是否符合</td></tr> <tr><td style="text-align:center;">实现方式</td> <td style="text-align:center;">表锁、行锁</td> <td style="text-align:center;">用version或timestamp比较</td></tr> <tr><td style="text-align:center;">实现者</td> <td style="text-align:center;">数据库</td> <td style="text-align:center;">开发者</td></tr> <tr><td style="text-align:center;">适用场景</td> <td style="text-align:center;">并发量大</td> <td style="text-align:center;">并发量小</td></tr></tbody></table></div> <footer class="page-edit"><!----> <!----></footer> <div class="page-nav"><p class="inner"><span class="prev">
+      ←
+      <a href="/mysql/engine.html" class="prev">
+        MyISAM vs Innodb
+      </a></span> <span class="next"><a href="/mysql/transaction.html">
+        事务(transaction)
+      </a>
+      →
+    </span></p></div> </main></div><div class="global-ui"></div></div>
+    <script src="/assets/js/app.6409024b.js" defer></script><script src="/assets/js/2.67153f4d.js" defer></script><script src="/assets/js/21.9261f599.js" defer></script>
+  </body>
+</html>

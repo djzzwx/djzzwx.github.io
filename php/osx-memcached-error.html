@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Max OSX 为 php7.4 安装 memcached | djzzwx的吃灰系列</title>
+    <meta name="generator" content="VuePress 1.9.7">
+    
+    <meta name="description" content="Just a description">
+    
+    <link rel="preload" href="/assets/css/0.styles.e4d8b86b.css" as="style"><link rel="preload" href="/assets/js/app.6409024b.js" as="script"><link rel="preload" href="/assets/js/2.67153f4d.js" as="script"><link rel="preload" href="/assets/js/25.aac092d3.js" as="script"><link rel="prefetch" href="/assets/js/10.020fc9bc.js"><link rel="prefetch" href="/assets/js/11.a654da16.js"><link rel="prefetch" href="/assets/js/12.0263d9b4.js"><link rel="prefetch" href="/assets/js/13.028acb64.js"><link rel="prefetch" href="/assets/js/14.168acbc4.js"><link rel="prefetch" href="/assets/js/15.4bf97cd3.js"><link rel="prefetch" href="/assets/js/16.23347fe3.js"><link rel="prefetch" href="/assets/js/17.a95e5a09.js"><link rel="prefetch" href="/assets/js/18.a253c430.js"><link rel="prefetch" href="/assets/js/19.566eec95.js"><link rel="prefetch" href="/assets/js/20.520dc042.js"><link rel="prefetch" href="/assets/js/21.9261f599.js"><link rel="prefetch" href="/assets/js/22.d1c70641.js"><link rel="prefetch" href="/assets/js/23.912473fe.js"><link rel="prefetch" href="/assets/js/24.b595ad37.js"><link rel="prefetch" href="/assets/js/3.90c514d0.js"><link rel="prefetch" href="/assets/js/4.bc7cf726.js"><link rel="prefetch" href="/assets/js/5.d250cb53.js"><link rel="prefetch" href="/assets/js/6.8779df89.js"><link rel="prefetch" href="/assets/js/7.d9d133a5.js"><link rel="prefetch" href="/assets/js/8.15ff2bc7.js"><link rel="prefetch" href="/assets/js/9.4a3da7fc.js">
+    <link rel="stylesheet" href="/assets/css/0.styles.e4d8b86b.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/" class="home-link router-link-active"><!----> <span class="site-name">djzzwx的吃灰系列</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <!----></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><!---->  <ul class="sidebar-links"><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading open"><span>php</span> <span class="arrow down"></span></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/php/hide-img-src.html" class="sidebar-link">php + h5 隐藏图片地址</a></li><li><a href="/php/hide-video-src.html" class="sidebar-link">php + h5 隐藏视频地址</a></li><li><a href="/php/osx-memcached-error.html" aria-current="page" class="active sidebar-link">Max OSX 为 php7.4 安装 memcached</a></li></ul></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>leetcode</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>mysql</span> <span class="arrow right"></span></p> <!----></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="max-osx-为-php7-4-安装-memcached"><a href="#max-osx-为-php7-4-安装-memcached" class="header-anchor">#</a> Max OSX 为 php7.4 安装 memcached</h1> <ol><li><p>brew install libmemcached</p></li> <li><p>brew install zlib</p></li> <li><p>pecl install memcached</p> <ul><li>libmemcached directory [no] : /usr/local/Cellar/libmemcached/1.0.18_2/</li> <li>zlib directory [no] : /usr/local/Cellar/zlib/1.2.11/</li> <li>use system fastlz [no] :</li> <li>enable igbinary serializer [no] :</li> <li>enable msgpack serializer [no] :</li> <li>enable json serializer [no] :</li> <li>enable server protocol [no] :</li> <li>enable sasl [yes] :</li> <li>enable sessions [yes] :</li></ul></li> <li><p>把<code>extension=&quot;memcached.so&quot;</code>加入<code>php.ini</code>(一般会在第3步自动加入)</p></li></ol></div> <footer class="page-edit"><!----> <!----></footer> <div class="page-nav"><p class="inner"><span class="prev">
+      ←
+      <a href="/php/hide-video-src.html" class="prev">
+        php + h5 隐藏视频地址
+      </a></span> <span class="next"><a href="/leetcode/situ/442.html">
+        数组中重复的数据
+      </a>
+      →
+    </span></p></div> </main></div><div class="global-ui"></div></div>
+    <script src="/assets/js/app.6409024b.js" defer></script><script src="/assets/js/2.67153f4d.js" defer></script><script src="/assets/js/25.aac092d3.js" defer></script>
+  </body>
+</html>
