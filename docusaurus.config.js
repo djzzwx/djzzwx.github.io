@@ -52,13 +52,6 @@ const config = {
           remarkPlugins: [remarkMath],
           rehypePlugins: [rehypeKatex],
         },
-        // blog: {
-        //   showReadingTime: true,
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
-          // editUrl:
-            // 'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
-        // },
         theme: {
           customCss: './src/css/custom.css',
         },
@@ -95,21 +88,21 @@ const config = {
       footer: {
         style: 'dark',
         links: [
-          {
-            items: [
-              {
-                html: `
-                        <div style="display: flex; justify-content: center;">
-                            <a href="http://beian.miit.gov.cn/" rel="noreferrer" target="_blank">冀ICP备2022030903号</a>
-                            &nbsp;&nbsp;&nbsp;&nbsp;
-                            <img src="img/beian.png" style="width: 18px; height: 20px;"> &nbsp;
-                            <a href="https://beian.mps.gov.cn/#/query/webSearch?code=13010902000412" rel="noreferrer" target="_blank">冀公网安备13010902000412号</a>&nbsp;&nbsp;&nbsp;&nbsp;
-                            <span>Built with Docusaurus.</span>
-                        </div>
-                      `
-              },
-            ],
-          },
+          // {
+          //   items: [
+          //     {
+          //       html: `
+          //               <div style="display: flex; justify-content: center;">
+          //                   <a href="http://beian.miit.gov.cn/" rel="noreferrer" target="_blank">冀ICP备2022030903号</a>
+          //                   &nbsp;&nbsp;&nbsp;&nbsp;
+          //                   <img src="img/beian.png" style="width: 18px; height: 20px;"> &nbsp;
+          //                   <a href="https://beian.mps.gov.cn/#/query/webSearch?code=13010902000412" rel="noreferrer" target="_blank">冀公网安备13010902000412号</a>&nbsp;&nbsp;&nbsp;&nbsp;
+          //                   <span>Built with Docusaurus.</span>
+          //               </div>
+          //             `
+          //     },
+          //   ],
+          // },
         ],
         copyright: ` `,
         // copyright: `Built with Docusaurus. <br/>本网站由<a href="https://www.upyun.com/?utm_source=lianmeng&utm_medium=referral" rel="noreferrer" target="_blank"> <img src="img/upyunlogo.png" style="width: 56px; height: 29px; vertical-align:middle;" /> </a> 提供CDN加速/云存储服务`,
