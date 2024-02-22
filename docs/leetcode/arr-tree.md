@@ -1,28 +1,29 @@
 # 树状数组
 
 ```go showLineNumbers
-type BIT struct {
-	n    int
-	tree []int
+type Fenwick []int
+
+func newFenwick(n int) Fenwick {
+	return make(Fenwick, n) // n+1
 }
 
-func (b BIT) lowbit(x int) int { return x & (-x) }
-
-func (b BIT) query(x int) int {
-	ret := 0
-	for x > 0 {
-		ret += b.tree[x]
-		x -= b.lowbit(x)
+// 1<=i<=n
+func (f Fenwick) update(i, val int) {
+	for ; i < len(f); i += i & -i {
+		f[i] += val
 	}
-	return ret
 }
 
-func (b BIT) update(x int) {
-	for x <= b.n {
-		b.tree[x]++
-		x += b.lowbit(x)
+// 1<=i<=n
+func (f Fenwick) query(i int) (res int) {
+	for ; i > 0; i &= i - 1 {
+		res += f[i]
 	}
+	return res
+}
+
+// 1<=l<=r<=n
+func (f Fenwick) sumRange(l, r int) int {
+	return f.query(r) - f.query(l-1)
 }
 ```
-
-[区域和检索 - 数组可修改](https://leetcode.cn/problems/range-sum-query-mutable/solution/-by-hu-ge-8-t4rn/)
