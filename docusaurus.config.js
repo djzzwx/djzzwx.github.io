@@ -79,6 +79,12 @@ const config = {
           },
           {
             type: 'docSidebar',
+            sidebarId: 'leetcodepy',
+            position: 'left',
+            label: 'leetcode-py',
+          },
+          {
+            type: 'docSidebar',
             sidebarId: 'mysql',
             position: 'left',
             label: 'mysql',
