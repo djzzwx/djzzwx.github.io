@@ -1,30 +1,22 @@
 # 大/小根堆
 
 ### 基础用法
-1. minheap
 
-```go showLineNumbers
-type IntHeap []int
+```go showLineNumbers title="base"
 
-func (h IntHeap) Len() int            { return len(h) }
-func (h IntHeap) Less(i, j int) bool  { return h[i] < h[j] }
-func (h IntHeap) Swap(i, j int)       { h[i], h[j] = h[j], h[i] }
-func (h *IntHeap) Push(x interface{}) { *h = append(*h, x.(int)) }
-func (h *IntHeap) Pop() interface{} {
-    x := (*h)[len(*h)-1]
-    *h = (*h)[:len(*h)-1]
-    return x
+type HeapType int
+type DHeap []HeapType
+
+func (h DHeap) Len() int { return len(h) }
+func (h DHeap) Less(i, j int) bool {
+	return h[i] > h[j]
 }
-func (h *IntHeap) push(v interface{}) { heap.Push(h, v) }
-func (h *IntHeap) pop() interface{} { return heap.Pop(h).(int) }
-```
+func (h DHeap) Swap(i, j int)       { h[i], h[j] = h[j], h[i] }
+func (h *DHeap) Push(x interface{}) { *h = append(*h, x.(HeapType)) }
+func (h *DHeap) Pop() interface{}   { x := (*h)[len(*h)-1]; *h = (*h)[:len(*h)-1]; return x }
+func (h *DHeap) push(v interface{}) { heap.Push(h, v) }
+func (h *DHeap) pop() HeapType      { return heap.Pop(h).(HeapType) }
 
-2. maxheap
-
-修改`minheap`中的`Less()`方法的比较即可
-
-```go showLineNumbers
-func (h IntHeap) Less(i, j int) bool  { return h[i] > h[j] }
 ```
 
 ### 简便实现
