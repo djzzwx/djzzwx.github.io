@@ -4,18 +4,18 @@
 
 ```go showLineNumbers title="base"
 
-type HeapType int
-type DHeap []HeapType
+type pair struct { p, c int }
+type DHeap []pair
 
 func (h DHeap) Len() int { return len(h) }
 func (h DHeap) Less(i, j int) bool {
-	return h[i] > h[j]
+	return h[i].p < h[j].p
 }
 func (h DHeap) Swap(i, j int)       { h[i], h[j] = h[j], h[i] }
-func (h *DHeap) Push(x interface{}) { *h = append(*h, x.(HeapType)) }
+func (h *DHeap) Push(x interface{}) { *h = append(*h, x.(pair)) }
 func (h *DHeap) Pop() interface{}   { x := (*h)[len(*h)-1]; *h = (*h)[:len(*h)-1]; return x }
 func (h *DHeap) push(v interface{}) { heap.Push(h, v) }
-func (h *DHeap) pop() HeapType      { return heap.Pop(h).(HeapType) }
+func (h *DHeap) pop() interface{}      { return heap.Pop(h) }
 
 ```
 
