@@ -204,8 +204,6 @@ func (ac *acam) buildFail() {
 ```
 
 [P3796 AC 自动机（简单版 II）](https://www.luogu.com.cn/problem/P3796)
-
-[P3808 AC 自动机（简单版）](https://www.luogu.com.cn/problem/P3808)
 1. 给定目标串 target
 2. 给定模式串 words
 3. 求出现次数最多的模式串（输出按输入顺序）
