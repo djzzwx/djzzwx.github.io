@@ -2,10 +2,10 @@
 
 [最小代价构造字符串](https://leetcode.cn/problems/construct-string-with-minimum-cost/description/)
 
-// 给定目标串 target
-// 给定模式串 words
-// 给定模式串使用花费 costs costs.length == words.length
-// 求构造目标串最小花费
+1. 给定目标串 target
+2. 给定模式串 words
+3. 给定模式串使用花费 costs costs.length == words.length
+4. 求构造目标串最小花费
 ```go
 type node struct {
 	son  [26]*node
