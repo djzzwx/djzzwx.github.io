@@ -4,18 +4,16 @@
 
 ```go showLineNumbers title="base"
 
-type pair struct { p, c int }
-type DHeap []pair
+type pair struct { v, p int }
+type PairHeap []pair
 
-func (h DHeap) Len() int { return len(h) }
-func (h DHeap) Less(i, j int) bool {
-	return h[i].p < h[j].p
-}
-func (h DHeap) Swap(i, j int)       { h[i], h[j] = h[j], h[i] }
-func (h *DHeap) Push(x interface{}) { *h = append(*h, x.(pair)) }
-func (h *DHeap) Pop() interface{}   { x := (*h)[len(*h)-1]; *h = (*h)[:len(*h)-1]; return x }
-func (h *DHeap) push(v interface{}) { heap.Push(h, v) }
-func (h *DHeap) pop() interface{}      { return heap.Pop(h) }
+func (h PairHeap) Len() int { return len(h) }
+func (h PairHeap) Less(i, j int) bool { return h[i].v < h[j].v || h[i].v == h[j].v && h[i].p < h[j].p }
+func (h PairHeap) Swap(i, j int) { h[i], h[j] = h[j], h[i] }
+func (h *PairHeap) Push(x interface{}) { *h = append(*h, x.(pair)) }
+func (h *PairHeap) Pop() interface{} { x := (*h)[len(*h)-1]; *h = (*h)[:len(*h)-1]; return x }
+func (h *PairHeap) push(v interface{}) { heap.Push(h, v) }
+func (h *PairHeap) pop() interface{} { return heap.Pop(h) }
 
 ```
 
