@@ -51,7 +51,7 @@ func (t seg) update(o, l, r, i, val int) {
 	t.maintain(o)
 }
 
-// 区间询问（没用到）
+// 区间询问
 func (t seg) query(o, l, r, L, R int) info {
 	if L <= l && r <= R {
 		return t[o]
@@ -72,9 +72,9 @@ func newSegmentTree(a []int) seg {
 	if n == 0 {
 		panic("slice can't be empty")
 	}
-	t := make(seg, 2<<bits.Len(uint(n-1)))
-	t.build(a, 1, 0, n-1)
-	return t
+	s := make(seg, 2<<bits.Len(uint(n-1)))
+	s.build(a, 1, 0, n-1)
+	return s
 }
 ```
 
