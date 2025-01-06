@@ -1,6 +1,84 @@
 # 线段树
 
 ```go showLineNumbers
+type info struct {
+	ans, sum, pre, suf int
+}
+
+type seg []info
+
+func (t seg) set(o, val int) {
+	t[o] = info{val, val, val, val}
+}
+
+func (t seg) mergeInfo(a, b info) info {
+	return info{
+		max(max(a.ans, b.ans), a.suf+b.pre),
+		a.sum + b.sum,
+		max(a.pre, a.sum+b.pre),
+		max(b.suf, b.sum+a.suf),
+	}
+}
+
+func (t seg) maintain(o int) {
+	t[o] = t.mergeInfo(t[o<<1], t[o<<1|1])
+}
+
+// 初始化线段树
+func (t seg) build(nums []int, o, l, r int) {
+	if l == r {
+		t.set(o, nums[l])
+		return
+	}
+	m := (l + r) >> 1
+	t.build(nums, o<<1, l, m)
+	t.build(nums, o<<1|1, m+1, r)
+	t.maintain(o)
+}
+
+// 单点更新
+func (t seg) update(o, l, r, i, val int) {
+	if l == r {
+		t.set(o, val)
+		return
+	}
+	m := (l + r) >> 1
+	if i <= m {
+		t.update(o<<1, l, m, i, val)
+	} else {
+		t.update(o<<1|1, m+1, r, i, val)
+	}
+	t.maintain(o)
+}
+
+// 区间询问（没用到）
+func (t seg) query(o, l, r, L, R int) info {
+	if L <= l && r <= R {
+		return t[o]
+	}
+	m := (l + r) >> 1
+	if R <= m {
+		return t.query(o<<1, l, m, L, R)
+	}
+	if m < L {
+		return t.query(o<<1|1, m+1, r, L, R)
+	}
+	return t.mergeInfo(t.query(o<<1, l, m, L, R), t.query(o<<1|1, m+1, r, L, R))
+}
+
+// a 的下标从 0 开始，线段树的区间下标也从 0 开始
+func newSegmentTree(a []int) seg {
+	n := len(a)
+	if n == 0 {
+		panic("slice can't be empty")
+	}
+	t := make(seg, 2<<bits.Len(uint(n-1)))
+	t.build(a, 1, 0, n-1)
+	return t
+}
+```
+
+```go showLineNumbers
 type lazySeg []struct {
 	l, r int
 	todo int
