@@ -25,11 +25,8 @@ func minimumCost(target string, words []string, costs []int) int {
 	}
 	const inf int = math.MaxInt / 2
 	dp := make([]int, n+1)
-	for i := range dp {
+	for i := 1; i <= n; i++ {
 		dp[i] = inf
-	}
-	dp[0] = 0
-	for i := 0; i <= n; i++ {
 		for _, p := range from[i] {
 			dp[i] = min(dp[i], dp[p.l]+int(p.cost))
 		}
