@@ -24,50 +24,40 @@ func logTrick(nums []int) []int {
 	return ors
 }
 
-func gcd(a, b int) int {
-	for a != 0 {
-		a, b = b%a, a
-	}
-	return b
-}
-
-func logTrick(nums []int, op int) map[int]int {
+func logTrick(nums []int, op func(x, y int) int) map[int]int {
 	res := map[int]int{}
 	type pair struct{ l, r, v int }
-	f := []pair{}
+	dp := []pair{}
 	for pos, cur := range nums {
-		for i := range f {
-			f[i].v = opc(f[i].v, cur, op)
+		for i := range dp {
+			dp[i].v = op(dp[i].v, cur)
 		}
-		f = append(f, pair{pos, pos + 1, cur})
+		dp = append(dp, pair{pos, pos + 1, cur})
 
 		ptr := 0
-		for _, v := range f[1:] {
-			if f[ptr].v != v.v {
+		for _, v := range dp[1:] {
+			if dp[ptr].v != v.v {
 				ptr += 1
-				f[ptr] = v
+				dp[ptr] = v
 			} else {
-				f[ptr].r = v.r
+				dp[ptr].r = v.r
 			}
 		}
-		f = f[:ptr+1]
-		for _, v := range f {
-			res[v.v] += v.r - v.l
+		dp = dp[:ptr+1]
+		for _, v := range dp {
+			res[v.v] += v.r - v.l // 值为v的子数组有多少个
 		}
 	}
 	return res
 }
 
-func opc(a, b, op int) int {
-	if op == 1 {
-		return a & b
-	} else if op == 2 {
-		return a | b
-	} else if op == 3 {
-		return gcd(a, b)
-	} else {
-		return -1
+func and(a, b int) int { return a & b }
+func or(a, b int) int  { return a | b }
+func gcd(a, b int) int {
+	for a != -1 {
+		a, b = b%a, a
 	}
+	return b
 }
 
 func logTrick(nums []int, k int) (ans int64) {
