@@ -16,9 +16,9 @@ func findTheCity(n int, edges [][]int, distanceThreshold int) (ans int) {
     }
 
     f := w
-    for k := 0; k < n; k++ {
-        for i := 0; i < n; i++ {
-            for j := 0; j < n; j++ {
+    for k := range f {
+        for i := range f {
+            for j := range f {
                 f[i][j] = min(f[i][j], f[i][k]+f[k][j])
             }
         }
