@@ -79,9 +79,9 @@ const config = {
           },
           {
             type: 'docSidebar',
-            sidebarId: 'leetcodepy',
+            sidebarId: 'k8s',
             position: 'left',
-            label: 'leetcode-py',
+            label: 'k8s',
           },
         ],
       },
