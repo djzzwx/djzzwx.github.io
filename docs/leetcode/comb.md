@@ -56,6 +56,9 @@ func pow(x, n int) int {
 }
 
 func comb(n, m int) int {
+	if m < 0 || n < m {
+		return 0
+	}
 	return F[n] * invF[m] % mod * invF[n-m] % mod
 }
 ```
