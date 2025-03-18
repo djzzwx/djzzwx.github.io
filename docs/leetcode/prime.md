@@ -35,9 +35,11 @@ func init() {
             list = append(list, i)
         }
         for _, v := range list {
-            if t := i * v; t < N {
-                primes[i*v] = false
+            t := i * v
+            if t >= N {
+                break
             }
+            primes[t] = false
             if i % v == 0 {
                 break
             }
