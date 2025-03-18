@@ -4,37 +4,56 @@
 
 ### 埃氏筛
 ```go showLineNumbers
-prime := make([]bool, n+1)
-for i := 2; i <= n; i++ {
-    prime[i] = true
-}
-for i := 2; i <= n; i++ {
-    if prime[i] {
-        for j := i * i; j <= n; j += i {
-            prime[j] = false
+const N int = 1e5+1
+var primes [N]bool
+
+func init() {
+    for i := 2; i < N; i++ {
+        primes[i] = true
+    }
+    for i := 2; i < N; i++ {
+        if primes[i] {
+            for j := i * i; j < N; j += i {
+                primes[j] = false
+            }
         }
     }
 }
 ```
 ### 欧拉筛
 ```go showLineNumbers
-prime := make([]bool, n+1)
-list := []int{}
-for i := 2; i <= n; i++ {
-    prime[i] = true
+const N int = 1e5+1
+var primes [N]bool
+
+func init() {
+    list := []int{}
+    for i := 2; i < N; i++ {
+        primes[i] = true
+    }
+    for i := 2; i < N; i++ {
+        if primes[i] {
+            list = append(list, i)
+        }
+        for _, v := range list {
+            if t := i * v; t < N {
+                primes[i*v] = false
+            }
+            if i % v == 0 {
+                break
+            }
+        }
+    }
 }
-for i := 2; i <= n; i++ {
-    if prime[i] {
-        list = append(list, i)
-    }
-    for _, v := range list {
-        if t := i * v; t <= n {
-            prime[i*v] = false
-        }
-        if i % v == 0 {
-            break
+```
+### 判断质数
+```go showLineNumbers
+func isPrime(n int) bool {
+    for i := 2; i*i <= n; i++ {
+        if n%i == 0 {
+            return false
         }
     }
+    return n >= 2 // 1 不是质数
 }
 ```
 
