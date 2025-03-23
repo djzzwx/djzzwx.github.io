@@ -14,7 +14,8 @@ Publishes the website to GitHub pages.
 
 We recommend that you begin by typing:
 
-`cd doc3`
+`cd dir`
 `pnpm start`
 
 Happy building awesome websites!
+
