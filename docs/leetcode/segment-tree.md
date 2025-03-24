@@ -1,196 +1,209 @@
 # 线段树
 
-```go showLineNumbers
-type info struct {
-	ans, sum, pre, suf int
+```go showLineNumbers title="无区间更新"
+// 线段树有两个下标，一个是线段树节点的下标，另一个是线段树维护的区间的下标
+// 节点的下标：从 1 开始，如果你想改成从 0 开始，需要把左右儿子下标分别改成 node*2+1 和 node*2+2
+// 区间的下标：从 0 开始
+type seg []struct {
+    val int // **根据题目修改**
 }
 
-type seg []info
-
-func (t seg) set(o, val int) {
-	t[o] = info{val, val, val, val}
+// 合并两个 val
+func (seg) mergeVal(a, b int) int {
+    return max(a, b) // **根据题目修改**
 }
 
-func (t seg) mergeInfo(a, b info) info {
-	return info{
-		max(max(a.ans, b.ans), a.suf+b.pre),
-		a.sum + b.sum,
-		max(a.pre, a.sum+b.pre),
-		max(b.suf, b.sum+a.suf),
-	}
+// 线段树维护一个长为 n 的数组（下标从 0 到 n-1），元素初始值为 initVal
+func newSegmentTree(n int, initVal int) seg {
+    a := make([]int, n)
+    for i := range a {
+        a[i] = initVal
+    }
+    return newSegmentTreeWithArray(a)
 }
 
-func (t seg) maintain(o int) {
-	t[o] = t.mergeInfo(t[o<<1], t[o<<1|1])
+// 线段树维护数组 a
+func newSegmentTreeWithArray(a []int) seg {
+    n := len(a)
+    t := make(seg, 2<<bits.Len(uint(n-1)))
+    t.build(a, 1, 0, n-1)
+    return t
 }
 
-// 初始化线段树
-func (t seg) build(nums []int, o, l, r int) {
-	if l == r {
-		t.set(o, nums[l])
-		return
-	}
-	m := (l + r) >> 1
-	t.build(nums, o<<1, l, m)
-	t.build(nums, o<<1|1, m+1, r)
-	t.maintain(o)
+// 合并左右儿子的 val 到当前节点的 val
+func (t seg) maintain(node int) {
+    t[node].val = t.mergeVal(t[node*2].val, t[node*2+1].val)
 }
 
-// 单点更新
-func (t seg) update(o, l, r, i, val int) {
-	if l == r {
-		t.set(o, val)
-		return
-	}
-	m := (l + r) >> 1
-	if i <= m {
-		t.update(o<<1, l, m, i, val)
-	} else {
-		t.update(o<<1|1, m+1, r, i, val)
-	}
-	t.maintain(o)
+// 用 a 初始化线段树
+// 时间复杂度 O(n)
+func (t seg) build(a []int, node, l, r int) {
+    if l == r { // 叶子
+        t[node].val = a[l] // 初始化叶节点的值
+        return
+    }
+    m := (l + r) / 2
+    t.build(a, node*2, l, m) // 初始化左子树
+    t.build(a, node*2+1, m+1, r) // 初始化右子树
+    t.maintain(node)
 }
 
-// 区间询问
-func (t seg) query(o, l, r, L, R int) info {
-	if L <= l && r <= R {
-		return t[o]
-	}
-	m := (l + r) >> 1
-	if R <= m {
-		return t.query(o<<1, l, m, L, R)
-	}
-	if m < L {
-		return t.query(o<<1|1, m+1, r, L, R)
-	}
-	return t.mergeInfo(t.query(o<<1, l, m, L, R), t.query(o<<1|1, m+1, r, L, R))
+// 更新 a[i] 为 mergeVal(a[i], val)
+// 调用 t.update(1, 0, n-1, i, val)
+// 0 <= i <= n-1
+// 时间复杂度 O(log n)
+func (t seg) update(node, l, r, i int, val int) {
+    if l == r { // 叶子（到达目标）
+        // 如果想直接替换的话，可以写 t[o].val = val
+        t[node].val = t.mergeVal(t[node].val, val)
+        return
+    }
+    m := (l + r) / 2
+    if i <= m { // i 在左子树
+        t.update(node*2, l, m, i, val)
+    } else { // i 在右子树
+        t.update(node*2+1, m+1, r, i, val)
+    }
+    t.maintain(node)
 }
 
-// a 的下标从 0 开始，线段树的区间下标也从 0 开始
-func newSegmentTree(a []int) seg {
-	n := len(a)
-	if n == 0 {
-		panic("slice can't be empty")
-	}
-	s := make(seg, 2<<bits.Len(uint(n-1)))
-	s.build(a, 1, 0, n-1)
-	return s
+// 返回用 mergeVal 合并所有 a[i] 的计算结果，其中 i 在闭区间 [ql, qr] 中
+// 调用 t.query(1, 0, n-1, ql, qr)
+// 如果只想获取 a[i]，可以调用 t.query(1, 0, n-1, i, i)
+// 0 <= ql <= qr <= n-1
+// 时间复杂度 O(log n)
+func (t seg) query(node, l, r, ql, qr int) int {
+    if ql <= l && r <= qr { // 当前子树完全在 [ql, qr] 内
+        return t[node].val
+    }
+    m := (l + r) / 2
+    if qr <= m { // [ql, qr] 在左子树
+        return t.query(node*2, l, m, ql, qr)
+    }
+    if ql > m { // [ql, qr] 在右子树
+        return t.query(node*2+1, m+1, r, ql, qr)
+    }
+    lRes := t.query(node*2, l, m, ql, qr)
+    rRes := t.query(node*2+1, m+1, r, ql, qr)
+    return t.mergeVal(lRes, rRes)
 }
 ```
 
-```go showLineNumbers
+```go showLineNumbers title="有区间更新"
+// 懒标记初始值
+const todoInit int = 0 // **根据题目修改**
+
 type lazySeg []struct {
-	l, r int
-	todo int
-	sum  int
+    val  int // **根据题目修改**
+    todo int
 }
 
-func (lazySeg) op(a, b int) int {
-	return a + b // % mod
+// 合并两个 val
+func (lazySeg) mergeVal(a, b int) int {
+    return a + b // **根据题目修改**
 }
 
-func (t lazySeg) maintain(o int) {
-	lo, ro := t[o<<1], t[o<<1|1]
-	t[o].sum = t.op(lo.sum, ro.sum)
+// 合并两个懒标记
+func (lazySeg) mergeTodo(a, b int) int {
+    return a + b // **根据题目修改**
 }
 
-func (t lazySeg) build(a []int, o, l, r int) {
-	t[o].l, t[o].r = l, r
-	if l == r {
-		t[o].sum = a[l-1]
-		return
-	}
-	m := (l + r) >> 1
-	t.build(a, o<<1, l, m)
-	t.build(a, o<<1|1, m+1, r)
-	t.maintain(o)
+// 把懒标记作用到 node 子树（本例为区间加）
+func (t lazySeg) apply(node, l, r int, todo int) {
+    cur := &t[node]
+    // 计算 tree[node] 区间的整体变化
+    cur.val += todo * (r - l + 1) // **根据题目修改**
+    cur.todo = t.mergeTodo(todo, cur.todo)
 }
 
-func (t lazySeg) do(o int, add int) {
-	to := &t[o]
-	to.todo += add                     // % mod
-	to.sum += int(to.r-to.l+1) * add // % mod
+// 线段树维护一个长为 n 的数组（下标从 0 到 n-1），元素初始值为 initVal
+func newLazySegmentTree(n int, initVal int) lazySeg {
+    a := make([]int, n)
+    for i := range a {
+        a[i] = initVal
+    }
+    return newLazySegmentTreeWithArray(a)
 }
 
-func (t lazySeg) spread(o int) {
-	if add := t[o].todo; add != 0 {
-		t.do(o<<1, add)
-		t.do(o<<1|1, add)
-		t[o].todo = 0
-	}
+// 线段树维护数组 a
+func newLazySegmentTreeWithArray(a []int) lazySeg {
+    n := len(a)
+    t := make(lazySeg, 2<<bits.Len(uint(n-1)))
+    t.build(a, 1, 0, n-1)
+    return t
 }
 
-// 如果维护的数据（或者判断条件）具有单调性，我们就可以在线段树上二分
-// 下面代码返回 [l,r] 内第一个值不低于 val 的下标（未找到时返回 n+1）
-// o=1  [l,r] 1<=l<=r<=n
-// https://codeforces.com/problemset/problem/1179/C
-func (t lazySeg) lowerBound(o, l, r int, val int) int {
-	if t[o].l == t[o].r {
-		if t[o].sum >= val {
-			return t[o].l
-		}
-		return t[o].l + 1
-	}
-	t.spread(o)
-	// 注意判断比较的对象是当前节点还是子节点，是先递归左子树还是右子树
-	if t[o<<1].sum >= val {
-		return t.lowerBound(o<<1, l, r, val)
-	}
-	return t.lowerBound(o<<1|1, l, r, val)
+// 把当前节点的懒标记下传给左右儿子
+func (t lazySeg) spread(node, l, r int) {
+    // 类似「断点续传」，接着完成之前没完成的下传任务
+    todo := t[node].todo
+    if todo == todoInit { // 没有需要下传的信息
+        return
+    }
+    m := (l + r) / 2
+    t.apply(node*2, l, m, todo)
+    t.apply(node*2+1, m+1, r, todo)
+    t[node].todo = todoInit // 下传完毕
 }
 
-// o=1  [l,r] 1<=l<=r<=n
-func (t lazySeg) update(o, l, r int, add int) {
-	if l <= t[o].l && t[o].r <= r {
-		t.do(o, add)
-		return
-	}
-	t.spread(o)
-	m := (t[o].l + t[o].r) >> 1
-	if l <= m {
-		t.update(o<<1, l, r, add)
-	}
-	if m < r {
-		t.update(o<<1|1, l, r, add)
-	}
-	t.maintain(o)
+// 合并左右儿子的 val 到当前节点的 val
+func (t lazySeg) maintain(node int) {
+    t[node].val = t.mergeVal(t[node*2].val, t[node*2+1].val)
 }
 
-// o=1  [l,r] 1<=l<=r<=n
-func (t lazySeg) query(o, l, r int) int {
-	if l <= t[o].l && t[o].r <= r {
-		return t[o].sum
-	}
-	t.spread(o)
-	m := (t[o].l + t[o].r) >> 1
-	if r <= m {
-		return t.query(o<<1, l, r)
-	}
-	if m < l {
-		return t.query(o<<1|1, l, r)
-	}
-	vl := t.query(o<<1, l, r)
-	vr := t.query(o<<1|1, l, r)
-	return t.op(vl, vr)
+// 用 a 初始化线段树
+// 时间复杂度 O(n)
+func (t lazySeg) build(a []int, node, l, r int) {
+    t[node].todo = todoInit
+    if l == r { // 叶子
+        t[node].val = a[l] // 初始化叶节点的值
+        return
+    }
+    m := (l + r) / 2
+    t.build(a, node*2, l, m) // 初始化左子树
+    t.build(a, node*2+1, m+1, r) // 初始化右子树
+    t.maintain(node)
 }
 
-func (t lazySeg) queryAll() int { return t[1].sum }
-
-// a 从 0 开始
-func newLazySegmentTree(a []int) lazySeg {
-	t := make(lazySeg, 4*len(a))
-	t.build(a, 1, 1, len(a))
-	return t
+// 用 f 更新 [ql, qr] 中的每个 a[i]
+// 调用 t.update(1, 0, n-1, ql, qr, f)
+// 0 <= ql <= qr <= n-1
+// 时间复杂度 O(log n)
+func (t lazySeg) update(node, l, r, ql, qr int, f int) {
+    if ql <= l && r <= qr { // 当前子树完全在 [ql, qr] 内
+        t.apply(node, l, r, f)
+        return
+    }
+    t.spread(node, l, r)
+    m := (l + r) / 2
+    if ql <= m { // 更新左子树
+        t.update(node*2, l, m, ql, qr, f)
+    }
+    if qr > m { // 更新右子树
+        t.update(node*2+1, m+1, r, ql, qr, f)
+    }
+    t.maintain(node)
 }
 
-// EXTRA: 适用于需要提取所有元素值的场景
-func (t lazySeg) spreadAll(o int) {
-	if t[o].l == t[o].r {
-		return
-	}
-	t.spread(o)
-	t.spreadAll(o << 1)
-	t.spreadAll(o<<1 | 1)
+// 返回用 mergeVal 合并所有 a[i] 的计算结果，其中 i 在闭区间 [ql, qr] 中
+// 调用 t.query(1, 0, n-1, ql, qr)
+// 0 <= ql <= qr <= n-1
+// 时间复杂度 O(log n)
+func (t lazySeg) query(node, l, r, ql, qr int) int {
+    if ql <= l && r <= qr { // 当前子树完全在 [ql, qr] 内
+        return t[node].val
+    }
+    t.spread(node, l, r)
+    m := (l + r) / 2
+    if qr <= m { // [ql, qr] 在左子树
+        return t.query(node*2, l, m, ql, qr)
+    }
+    if ql > m { // [ql, qr] 在右子树
+        return t.query(node*2+1, m+1, r, ql, qr)
+    }
+    lRes := t.query(node*2, l, m, ql, qr)
+    rRes := t.query(node*2+1, m+1, r, ql, qr)
+    return t.mergeVal(lRes, rRes)
 }
 ```
 
@@ -488,200 +501,4 @@ func max(a, b int) int {
 	}
 	return b
 }
-```
-
-[leetcode 729. 我的日程安排表 I](https://leetcode.cn/problems/my-calendar-i/)
-
-```php
-class Node
-{
-    public $left = null, $right = null;
-    public $val = 0, $add = 0;
-}
-
-class MyCalendar {
-    private $len = 1e9;
-    private $root = null;
-    /**
-     */
-    function __construct() {
-        $this->root = new Node;
-    }
-
-    /**
-     * @param Integer $start
-     * @param Integer $end
-     * @return Boolean
-     */
-    function book($start, $end) {
-        if ($this->query($this->root, 0, $this->len, $start, $end - 1)) {
-            return false;
-        }
-        $this->update($this->root, 0, $this->len, $start, $end - 1, 1);
-        return true;
-    }
-
-    function query(Node $node, $start, $end, $l, $r) {
-        if ($start >= $l && $end <= $r) {
-            return $node->val;
-        }
-        $this->pushDown($node);
-        $mid = ($start + $end) >> 1;
-        $ans = 0;
-        if ($mid >= $l) {
-            $ans = $this->query($node->left, $start, $mid, $l, $r);
-        }
-        if ($mid < $r) {
-            $ans = max($ans, $this->query($node->right, $mid + 1, $end, $l, $r));
-        }
-        return $ans;
-    }
-
-    function update(Node $node, $start, $end, $l, $r, $val) {
-        if ($start >= $l && $end <= $r) {
-            $node->val += $val;
-            $node->add += $val;
-            return ;
-        }
-        $this->pushDown($node);
-        $mid = ($start + $end) >> 1;
-        if ($mid >= $l) {
-            $this->update($node->left, $start, $mid, $l, $r, $val);
-        }
-        if ($mid < $r) {
-            $this->update($node->right, $mid + 1, $end, $l, $r, $val);
-        }
-        $this->pushUp($node);
-    }
-
-    function pushDown(Node $node) {
-        if ($node->left == null) {
-            $node->left = new Node;
-        }
-        if ($node->right == null) {
-            $node->right = new Node;
-        }
-        if ($node->add == 0) {
-            return;
-        }
-        $node->left->val += $node->add;
-        $node->left->add += $node->add;
-        $node->right->val += $node->add;
-        $node->right->add += $node->add;
-        $node->add = 0;
-    }
-
-    function pushUp(Node $node) {
-        $node->val = max($node->left->val, $node->right->val);
-    }
-}
-
-/**
- * Your MyCalendar object will be instantiated and called as such:
- * $obj = MyCalendar();
- * $ret_1 = $obj->book($start, $end);
- */
-
-```
-
-[731. 我的日程安排表 II](https://leetcode.cn/problems/my-calendar-ii/)
-```php
-<?php
-
-class Node
-{
-    public $left = null, $right = null;
-    public $val = 0, $add = 0;
-}
-
-class MyCalendarTwo
-{
-    private $limit = 1e9;
-    private $root = null;
-
-    /**
-     */
-    function __construct()
-    {
-        $this->root = new Node;
-    }
-
-    /**
-     * @param Integer $start
-     * @param Integer $end
-     * @return Boolean
-     */
-    function book($start, $end)
-    {
-        if ($this->query($this->root, 0, $this->limit, $start, $end - 1) > 1) {
-            return false;
-        }
-        $this->update($this->root, 0, $this->limit, $start, $end - 1, 1);
-        return true;
-    }
-
-    function query(Node $node, $start, $end, $l, $r)
-    {
-        if ($start >= $l && $end <= $r) {
-            return $node->val;
-        }
-        $this->pushDown($node);
-        $mid = ($start + $end) >> 1;
-        $ans = 0;
-        if ($mid >= $l) {
-            $ans = $this->query($node->left, $start, $mid, $l, $r);
-        }
-        if ($mid < $r) {
-            $ans = max($ans, $this->query($node->right, $mid + 1, $end, $l, $r));
-        }
-        return $ans;
-    }
-
-    function update(Node $node, $start, $end, $l, $r, $val)
-    {
-        if ($start >= $l && $end <= $r) {
-            $node->val += $val;
-            $node->add += $val;
-            return;
-        }
-        $this->pushDown($node);
-        $mid = ($start + $end) >> 1;
-        if ($mid >= $l) {
-            $this->update($node->left, $start, $mid, $l, $r, $val);
-        }
-        if ($mid < $r) {
-            $this->update($node->right, $mid + 1, $end, $l, $r, $val);
-        }
-        $this->pushUp($node);
-    }
-
-    function pushDown(Node $node)
-    {
-        if (!$node->left) {
-            $node->left = new Node;
-        }
-        if (!$node->right) {
-            $node->right = new Node;
-        }
-        if ($node->add == 0) {
-            return;
-        }
-        $node->left->val  += $node->add;
-        $node->left->add  += $node->add;
-        $node->right->val += $node->add;
-        $node->right->add += $node->add;
-        $node->add        = 0;
-    }
-
-    function pushUp(Node $node)
-    {
-        $node->val = max($node->left->val, $node->right->val);
-    }
-}
-
-/**
- * Your MyCalendarTwo object will be instantiated and called as such:
- * $obj = MyCalendarTwo();
- * $ret_1 = $obj->book($start, $end);
- */
 ```
