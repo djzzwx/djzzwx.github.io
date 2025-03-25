@@ -1,7 +1,7 @@
 # Floyd 
 
 [模板题：阈值距离内邻居最少的城市](https://leetcode.cn/problems/find-the-city-with-the-smallest-number-of-neighbors-at-a-threshold-distance/description/)
-```go showLineNumbers title='求左右侧第一个 <= 当前值的位置'
+```go showLineNumbers
 func findTheCity(n int, edges [][]int, distanceThreshold int) (ans int) {
     w := make([][]int, n)
     for i := range w {
