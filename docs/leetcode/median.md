@@ -112,3 +112,93 @@ func (h *lazyHeap) pushPop(v int) int {
 	return v
 }
 ```
+
+
+```go showLineNumbers title="有序集合" 
+func medianSlidingWindow(nums []int, k int) [][2]int {
+	ans := make([][2]int, len(nums)-k+1)
+	var lSum, rSum, lSize, rSize int
+	left := redblacktree.New[int, int]()
+	right := redblacktree.New[int, int]()
+
+	put := func(tr *redblacktree.Tree[int, int], x int) {
+		c, ok := tr.Get(x)
+		if ok {
+			tr.Put(x, c+1)
+		} else {
+			tr.Put(x, 1)
+		}
+	}
+	remove := func(tr *redblacktree.Tree[int, int], a int) {
+		c, _ := tr.Get(a)
+		if c == 1 {
+			tr.Remove(a)
+		} else {
+			tr.Put(a, c-1)
+		}
+	}
+	r2l := func() {
+		rightLeftVal := right.Left().Key
+		remove(right, rightLeftVal)
+		put(left, rightLeftVal)
+		lSum += rightLeftVal
+		rSum -= rightLeftVal
+		lSize++
+		rSize--
+	}
+	l2r := func() {
+		leftRightVal := left.Right().Key
+		remove(left, leftRightVal)
+		put(right, leftRightVal)
+		rSum += leftRightVal
+		lSum -= leftRightVal
+		lSize--
+		rSize++
+	}
+	balance := func() {
+		for lSize <= rSize {
+			r2l()
+		}
+		for lSize > rSize+1 {
+			l2r()
+		}
+	}
+
+	for i, in := range nums {
+		// 1. 进入窗口
+		put(right, in)
+		rSum += in
+		rSize++
+
+		balance()
+
+		l := i + 1 - k
+		if l < 0 { // 窗口大小不足 k
+			continue
+		}
+
+		// 2. 计算答案
+		if k%2 > 0 {
+			ans[l][0] = int(left.Right().Key)
+		} else {
+			ans[l][0] = int(right.Left().Key+left.Right().Key) / 2
+		}
+		ans[l][1] = ans[l][0]*(k&1) - lSum + rSum
+
+		// 3. 离开窗口
+		out := nums[l]
+		if out <= left.Right().Key {
+			remove(left, out)
+			lSum -= out
+			lSize--
+		} else {
+			remove(right, out)
+			rSum -= out
+			rSize--
+		}
+		balance()
+	}
+
+	return ans
+}
+```
