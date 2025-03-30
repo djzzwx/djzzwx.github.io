@@ -1,4 +1,4 @@
-# 窗口维护前k小（对顶堆/有序集合）
+# 窗口前k小
 
 [将数组分成最小总代价的子数组 II](https://leetcode.cn/problems/divide-an-array-into-subarrays-with-minimum-cost-ii/description/)
 ```go showLineNumbers
