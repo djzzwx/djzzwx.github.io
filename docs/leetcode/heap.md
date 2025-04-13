@@ -23,25 +23,25 @@ func (h *PairHeap) pop() interface{} { return heap.Pop(h) }
 
 ```go showLineNumbers
 type IntHeap struct {
-	sort.IntSlice
+    sort.IntSlice
 }
 
 func (h *IntHeap) Push(v interface{}) {
-	h.IntSlice = append(h.IntSlice, v.(int))
+    h.IntSlice = append(h.IntSlice, v.(int))
 }
 
 func (h *IntHeap) Pop() interface{} {
-	t := h.IntSlice[len(h.IntSlice)-1]
-	h.IntSlice = h.IntSlice[:len(h.IntSlice)-1]
-	return t
+    t := h.IntSlice[len(h.IntSlice)-1]
+    h.IntSlice = h.IntSlice[:len(h.IntSlice)-1]
+    return t
 }
 
 func (h *IntHeap) push(v interface{}) {
-	heap.Push(h, v)
+    heap.Push(h, v)
 }
 
 func (h *IntHeap) pop() interface{} {
-	return heap.Pop(h).(int)
+    return heap.Pop(h).(int)
 }
 ```
 

@@ -62,7 +62,7 @@ spec:
    image: wangyanglinux/myapp:v1.0
  initContainers:
  - name: randexit
- 	image: wangyanglinux/tools:randexitv1
+     image: wangyanglinux/tools:randexitv1
    args: ["--exitcode=1"]
 ```
 
@@ -86,44 +86,44 @@ ENTRYPOINT ["/root/randexit"]
 package main
 
 import (
-	"flag"
-	"fmt"
-	"math/rand"
-	"os"
-	"time"
+    "flag"
+    "fmt"
+    "math/rand"
+    "os"
+    "time"
 )
 
 func main() {
-	sleepTime := flag.Int("sleeptime", 4, "休眠时间")
-	exitcode := flag.Int("exitcode", 2, "返回码")
-	flag.Parse()
-	sleeptimeDing := *sleepTime
-	// 处理休眠逻辑
-	for *sleepTime >= 0 {
-		time.Sleep(time.Second * 1)
-		*sleepTime--
-	}
-	// 产生随机返回码
-	// exitcode 值为 0, 返回码为 0
-	// exitcode 值为 1，返回码为 1
-	// 否则随机产生返回码
-	if *exitcode == 0 {
-		fmt.Printf("休眠 %v 秒，返回码为 %v！\n", sleeptimeDing, 0)
-		os.Exit(0)
-	} else if *exitcode == 1 {
-		fmt.Printf("休眠 %v 秒，返回码为 %v！\n", sleeptimeDing, 1)
-		os.Exit(1)
-	} else {
-		rand.Seed(time.Now().UnixNano())
-		num := rand.Intn(100)
-		if num >= 50 {
-			fmt.Printf("休眠 %v 秒，产生的随机数为 %v，大于等于 50 ，返回码为 %v！\n", sleeptimeDing, num, 1)
-			os.Exit(1)
-		} else {
-			fmt.Printf("休眠 %v 秒，产生的随机数为 %v，小于等于 50 ，返回码为 %v！\n", sleeptimeDing, num, 0)
-			os.Exit(0)
-		}
-	}
+    sleepTime := flag.Int("sleeptime", 4, "休眠时间")
+    exitcode := flag.Int("exitcode", 2, "返回码")
+    flag.Parse()
+    sleeptimeDing := *sleepTime
+    // 处理休眠逻辑
+    for *sleepTime >= 0 {
+        time.Sleep(time.Second * 1)
+        *sleepTime--
+    }
+    // 产生随机返回码
+    // exitcode 值为 0, 返回码为 0
+    // exitcode 值为 1，返回码为 1
+    // 否则随机产生返回码
+    if *exitcode == 0 {
+        fmt.Printf("休眠 %v 秒，返回码为 %v！\n", sleeptimeDing, 0)
+        os.Exit(0)
+    } else if *exitcode == 1 {
+        fmt.Printf("休眠 %v 秒，返回码为 %v！\n", sleeptimeDing, 1)
+        os.Exit(1)
+    } else {
+        rand.Seed(time.Now().UnixNano())
+        num := rand.Intn(100)
+        if num >= 50 {
+            fmt.Printf("休眠 %v 秒，产生的随机数为 %v，大于等于 50 ，返回码为 %v！\n", sleeptimeDing, num, 1)
+            os.Exit(1)
+        } else {
+            fmt.Printf("休眠 %v 秒，产生的随机数为 %v，小于等于 50 ，返回码为 %v！\n", sleeptimeDing, num, 0)
+            os.Exit(0)
+        }
+    }
 }
 ```
 
@@ -133,13 +133,13 @@ func main() {
 
 ## 探针
 + 探针是由 `kubelet` 对容器执行的定期诊断。要执行诊断，`kubelet` 调用由容器实现的 `Handler`。有三种类型的处理程序：
-	+ `ExecAction`：在容器内执行指定命令。如果命令退出时返回码为 `0` 则认为诊断成功。
-	+ `TCPSocketAction`：对指定端口的容器上的`IP`地址执行`TCP`检查。如果端口打开，则认为诊断成功。
-	+ `HTTPGetAction`：对指定端口和路径上的`IP`地址执行`HTTP Get`请求。如果响应的状态码大于等于200且小于400，则认为诊断成功。
+    + `ExecAction`：在容器内执行指定命令。如果命令退出时返回码为 `0` 则认为诊断成功。
+    + `TCPSocketAction`：对指定端口的容器上的`IP`地址执行`TCP`检查。如果端口打开，则认为诊断成功。
+    + `HTTPGetAction`：对指定端口和路径上的`IP`地址执行`HTTP Get`请求。如果响应的状态码大于等于200且小于400，则认为诊断成功。
 + 每次此探测都将获得以下三种结果之一：
-	+ 成功：容器通过了诊断。
-	+ 失败：容器未通过诊断。
-	+ 未知：诊断失败，不采取任何行动。
+    + 成功：容器通过了诊断。
+    + 失败：容器未通过诊断。
+    + 未知：诊断失败，不采取任何行动。
 
 ## 探针分类
 + `startupProbe`: 是否开始检测？
@@ -149,17 +149,17 @@ func main() {
 ## redinessProbe 就绪探针
 ##### 介绍：k8s通过添加就绪探针，解决尤其是在扩容时保证提供给用户的服务都是可用的。
 + 选项说明
-	+ `initialDelaySeconds`：容器启动后要等待多少秒后就探针开始工作，单位“秒”，默认是`0`秒，最小值是`0`。
-	+ `periodSeconds`：执行探测的时间间隔（单位是秒），默认为`10s`，单位“秒”，最小值是`1`。
-	+ `timeoutSeconds`：探针执行检测请求后，等待响应的超时时间，默认为`1s`，单位“秒”，最小值是`1`。
-	+ `successThreshold`：探针检测失败后认为成功的最小连接成功次数，默认值为`1`。必须为`1`才能激活和启动。最小值为`1`。
-	+ `failureThreshold`：探测失败的重试次数，重试一定次数后将认为失败，默认值为`3`，最小值为`1`。
+    + `initialDelaySeconds`：容器启动后要等待多少秒后就探针开始工作，单位“秒”，默认是`0`秒，最小值是`0`。
+    + `periodSeconds`：执行探测的时间间隔（单位是秒），默认为`10s`，单位“秒”，最小值是`1`。
+    + `timeoutSeconds`：探针执行检测请求后，等待响应的超时时间，默认为`1s`，单位“秒”，最小值是`1`。
+    + `successThreshold`：探针检测失败后认为成功的最小连接成功次数，默认值为`1`。必须为`1`才能激活和启动。最小值为`1`。
+    + `failureThreshold`：探测失败的重试次数，重试一定次数后将认为失败，默认值为`3`，最小值为`1`。
 
 + 就绪探测
-	+ 如果 `Pod` 内部的 `container` 不添加就绪探测，默认就绪。如果添加了就绪探测， 只有就绪通过以后，才标记修改为就绪状态。当前 `Pod` 内的所有的 `container` 都就绪，才标记当前 `Pod` 就绪
-		+ 成功：将当前的 C 标记为就绪
-		+ 失败：静默
-		+ 未知：静默
+    + 如果 `Pod` 内部的 `container` 不添加就绪探测，默认就绪。如果添加了就绪探测， 只有就绪通过以后，才标记修改为就绪状态。当前 `Pod` 内的所有的 `container` 都就绪，才标记当前 `Pod` 就绪
+        + 成功：将当前的 C 标记为就绪
+        + 失败：静默
+        + 未知：静默
 
 ### 就绪探测
 
@@ -205,7 +205,7 @@ spec:
  - name: readiness-exec-container
    image: wangyanglinux/tools:busybox
    imagePullPolicy: IfNotPresent
-   command: ["/bin/sh","-c","touch /tmp/live ; sleep 60; rm -rf /tmp/live; 
+   command: ["/bin/sh","-c","touch /tmp/live ; sleep 60; rm -rf /tmp/live;
 sleep
 3600"]
    readinessProbe:
@@ -241,17 +241,17 @@ spec:
 ## livenessProbe 存活探针
 ##### 介绍：k8s通过添加存活探针，解决虽然活着但是已经死了的问题。
 + 选项说明
-	+ `initialDelaySeconds`：容器启动后要等待多少秒后就探针开始工作，单位“秒”，默认是`0`秒，最小值是`0`。
-	+ `periodSeconds`：执行探测的时间间隔（单位是秒），默认为`10s`，单位“秒”，最小值是`1`。
-	+ `timeoutSeconds`：探针执行检测请求后，等待响应的超时时间，默认为`1s`，单位“秒”，最小值是`1`。
-	+ `successThreshold`：探针检测失败后认为成功的最小连接成功次数，默认值为`1`。必须为`1`才能激活和启动。最小值为`1`。
-	+ `failureThreshold`：探测失败的重试次数，重试一定次数后将认为失败，默认值为`3`，最小值为`1`。
+    + `initialDelaySeconds`：容器启动后要等待多少秒后就探针开始工作，单位“秒”，默认是`0`秒，最小值是`0`。
+    + `periodSeconds`：执行探测的时间间隔（单位是秒），默认为`10s`，单位“秒”，最小值是`1`。
+    + `timeoutSeconds`：探针执行检测请求后，等待响应的超时时间，默认为`1s`，单位“秒”，最小值是`1`。
+    + `successThreshold`：探针检测失败后认为成功的最小连接成功次数，默认值为`1`。必须为`1`才能激活和启动。最小值为`1`。
+    + `failureThreshold`：探测失败的重试次数，重试一定次数后将认为失败，默认值为`3`，最小值为`1`。
 
 + 存活探测
-	+ 如果 `Pod` 内部不指定存活探测，可能会发生容器运行但是无法提供服务的情况
-		+ 成功：静默
-		+ 失败：根据重启的策略进行重启的动作
-		+ 未知：静默
+    + 如果 `Pod` 内部不指定存活探测，可能会发生容器运行但是无法提供服务的情况
+        + 成功：静默
+        + 失败：根据重启的策略进行重启的动作
+        + 未知：静默
 ### 存活探测
 
 <details>
@@ -296,7 +296,7 @@ spec:
  - name: liveness-exec-container
    image: wangyanglinux/tools:busybox
    imagePullPolicy: IfNotPresent
-   command: ["/bin/sh","-c","touch /tmp/live ; sleep 60; rm -rf /tmp/live; 
+   command: ["/bin/sh","-c","touch /tmp/live ; sleep 60; rm -rf /tmp/live;
 sleep
 3600"]
    livenessProbe:
@@ -332,17 +332,17 @@ spec:
 ## startupProbe 启动探针
 ##### k8s在1.16版本后增加 startupProbe 探针，主要解决在复杂的程序中 readinessProbe livenessProbe 探针无法更好的判断程序是否启动/是否存活
 + 选项说明
-	+ `initialDelaySeconds`：容器启动后要等待多少秒后就探针开始工作，单位“秒”，默认是`0`秒，最小值是`0`。
-	+ `periodSeconds`：执行探测的时间间隔（单位是秒），默认为`10s`，单位“秒”，最小值是`1`。
-	+ `timeoutSeconds`：探针执行检测请求后，等待响应的超时时间，默认为`1s`，单位“秒”，最小值是`1`。
-	+ `successThreshold`：探针检测失败后认为成功的最小连接成功次数，默认值为`1`。必须为`1`才能激活和启动。最小值为`1`。
-	+ `failureThreshold`：探测失败的重试次数，重试一定次数后将认为失败，默认值为`3`，最小值为`1`。
+    + `initialDelaySeconds`：容器启动后要等待多少秒后就探针开始工作，单位“秒”，默认是`0`秒，最小值是`0`。
+    + `periodSeconds`：执行探测的时间间隔（单位是秒），默认为`10s`，单位“秒”，最小值是`1`。
+    + `timeoutSeconds`：探针执行检测请求后，等待响应的超时时间，默认为`1s`，单位“秒”，最小值是`1`。
+    + `successThreshold`：探针检测失败后认为成功的最小连接成功次数，默认值为`1`。必须为`1`才能激活和启动。最小值为`1`。
+    + `failureThreshold`：探测失败的重试次数，重试一定次数后将认为失败，默认值为`3`，最小值为`1`。
 
 + 启动探测
-	+ 保障存活探针在执行的时候不会因为时间设定问题导致无限死亡或者延迟很长的情况
-		+ 成功：开始允许存活探测 /就绪探测开始执行
-		+ 失败：静默
-		+ 未知：静默
+    + 保障存活探针在执行的时候不会因为时间设定问题导致无限死亡或者延迟很长的情况
+        + 成功：开始允许存活探测 /就绪探测开始执行
+        + 失败：静默
+        + 未知：静默
 ### 启动探测
 
 <details>
@@ -369,7 +369,7 @@ spec:
      initialDelaySeconds: 1
      periodSeconds: 3
    startupProbe:
-	  httpGet:
+      httpGet:
        path: /index1.html
        port: 80
      failureThreshold: 30
@@ -382,8 +382,8 @@ spec:
 ## 钩子
 ##### Pod hook （钩子）是由Kubernetes管理的kubelet发起的，当容器中的进程启动前或者容器中的进程终止之前运行，这是包含在容器的生命周期之中。可以同时为 Pod 中的所有容器都配置 hook
 + `Hook` 的类型包括两种：
-	+ `exec`：执行一段命令
-	+ `HTTP`：发送 `HTTP` 请求
+    + `exec`：执行一段命令
+    + `HTTP`：发送 `HTTP` 请求
 
 ### 钩子
 
@@ -454,9 +454,9 @@ spec:
 
 :::tip
 在 k8s 中，理想的状态是 pod 优雅释放，但是并不是每一个 Pod 都会这么顺利
-	+ Pod 卡死，处理不了优雅退出的命令或者操作
-	+ 优雅退出的逻辑有 BUG，陷入死循环
-	+ 代码问题，导致执行的命令没有效果
+    + Pod 卡死，处理不了优雅退出的命令或者操作
+    + 优雅退出的逻辑有 BUG，陷入死循环
+    + 代码问题，导致执行的命令没有效果
 
 > 对于以上问题，`k8s` 的 `Pod` 终止流程中还有一个“最多可以容忍的时间”，即 `grace period`（在pod.spec.terminationGracePeriodSeconds 字段定义)，这个值默认是30秒，当我们执行 `kubectl delete`的时候也可以通过 `——grace—period` 参数显示指定一个优雅退出时间来覆盖 `Pod` 中的配置，如果我们配置的 `grace period` 超过时间之后，`k8s` 就只能选择强制 `kill Pod`。值得注意的是，这与`preStop Hook`和 `SIGTERM` 信号并行发生。`k8s` 不会等待 `preStop Hook` 完成。如果你的应用程序完成关闭并在`terminationGracePeriod` 完成之前退出，k8s会立即进入下一步。
 :::

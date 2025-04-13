@@ -11,7 +11,7 @@ Kubernetes `Service` 定义了这样一种抽象：一个 `Pod` 的逻辑分组�
 + 在 `Kubernetes v1.0` 版本，代理完全在 `userspace`。
 ![Service](/img/k8s/service-userspace.png)
 + 在 `Kubernetes v1.1` 版本，新增了 `iptables` 代理， 但并不是默认的运行模式。
-+ 从 `Kubernetes v1.2` 起，默认就是 `iptables` 代理。 
++ 从 `Kubernetes v1.2` 起，默认就是 `iptables` 代理。
 ![Service](/img/k8s/service-iptables.png)
 + 在 `Kubernetes v1.8.0-beta.0` 中，添加了 `ipvs` 代理。
 ![Service](/img/k8s/service-ipvs.png)
@@ -43,8 +43,8 @@ Kubernetes `Service` 定义了这样一种抽象：一个 `Pod` 的逻辑分组�
   + `pod` 的标签是 `svc` 的集合（同一名字空间下）
 
 + `svc dns` 域名
-	+ `svcName.nsName.svc.domainName.` （末尾的 . 代表根域）
-		      `domainName` `cluster.local.`
+    + `svcName.nsName.svc.domainName.` （末尾的 . 代表根域）
+              `domainName` `cluster.local.`
 
 + `svc.spec.internalTrafficPolicy`
   + `Cluster` 集群的内部都可以

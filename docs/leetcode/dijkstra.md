@@ -4,32 +4,32 @@
 // 适用于稠密图 O(n^2)
 
 func shortestPathDijkstra(g [][]int, st int) []int {
-	n := len(g)
+    n := len(g)
 
-	const inf int = 1e18 // 1e9+1
-	dis := make([]int, n)
-	for i := range dis {
-		dis[i] = inf
-	}
-	dis[st] = 0
-	vis := make([]bool, n)
-	for {
-		v := -1
-		for w, b := range vis {
-			if !b && (v < 0 || dis[w] < dis[v]) {
-				v = w
-			}
-		}
-		if v < 0 {
-			return dis
-		}
-		vis[v] = true
-		for w, wt := range g[v] {
-			if newD := dis[v] + wt; newD < dis[w] {
-				dis[w] = newD
-			}
-		}
-	}
+    const inf int = 1e18 // 1e9+1
+    dis := make([]int, n)
+    for i := range dis {
+        dis[i] = inf
+    }
+    dis[st] = 0
+    vis := make([]bool, n)
+    for {
+        v := -1
+        for w, b := range vis {
+            if !b && (v < 0 || dis[w] < dis[v]) {
+                v = w
+            }
+        }
+        if v < 0 {
+            return dis
+        }
+        vis[v] = true
+        for w, wt := range g[v] {
+            if newD := dis[v] + wt; newD < dis[w] {
+                dis[w] = newD
+            }
+        }
+    }
 }
 ```
 ```go showLineNumbers

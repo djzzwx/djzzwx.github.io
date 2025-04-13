@@ -19,7 +19,7 @@
 ## ReplicationController 和 ReplicaSet
 &emsp;&emsp;ReplicationController（RC）用来确保容器应用的副本数始终保持在用户定义的副本数，即如果有容器异常退出，会自动创建新的Pod来替代；而如果异常多出来的容器也会自动回收；
 
-&emsp;&emsp;在新版本的 Kubernetes 中建议使用 ReplicaSet 来取代 ReplicationController 。ReplicaSet 跟 ReplicationController 没有本质的不同，只是名字不一样，并且 ReplicaSet 支持集合式的 selector; 
+&emsp;&emsp;在新版本的 Kubernetes 中建议使用 ReplicaSet 来取代 ReplicationController 。ReplicaSet 跟 ReplicationController 没有本质的不同，只是名字不一样，并且 ReplicaSet 支持集合式的 selector;
 
 <details>
 <summary>RC控制器</summary>
@@ -82,7 +82,7 @@ spec:
 
 > ###### selector.matchExpressions
 > `rs` 在标签选择器上，除了可以定义键值对的选择形式，还支持 `matchExpressions` 字段，可以提供多种选择。
-> 
+>
 > 目前支持的操作包括：
 > + In：label 的值在某个列表中
 > + NotIn：label 的值不在某个列表中
@@ -182,18 +182,18 @@ spec:
 </details>
 
 > Deployment 为 Pod 和 ReplicaSet 提供了一个声明式定义(declarative )方法，用来替 代以前的 ReplicationController 来方便的管理应用。典型的应用场景包括：
->	+ 定义 Deployment 来创建 Pod 和 ReplicaSet 
->	+ 滚动升级和回滚应用
->	+ 扩容和缩容
->	+ 暂停和继续 Deployment 
+>    + 定义 Deployment 来创建 Pod 和 ReplicaSet
+>    + 滚动升级和回滚应用
+>    + 扩容和缩容
+>    + 暂停和继续 Deployment
 
 ### Deployment - 更新策略
 
 > `kubectl explain deploy.spec.strategy.type`
 > + Recreate
 > + rollingUpdate
-> 	+ maxSurge：指定超出副本数有几个，两种方式：1、指定数量2、百分比口
-> 	+ maxUnavailable:最多有几个不可用
+>     + maxSurge：指定超出副本数有几个，两种方式：1、指定数量2、百分比口
+>     + maxUnavailable:最多有几个不可用
 
 <details>
 <summary>金丝雀部署</summary>
@@ -249,9 +249,9 @@ spec:
 > + `spec.template` 格式同 `Pod`
 > + `RestartPolicy` 仅支持 `Never` 或 `OnFailure`
 > + 单个 `Pod` 时，默认 `Pod` 成功运行后 `Job` 即结束
-> + `.spec.completions` 标志 `Job` 结束需要成功运行的 `Pod` 个数，默认为 `1` 
+> + `.spec.completions` 标志 `Job` 结束需要成功运行的 `Pod` 个数，默认为 `1`
 > + `.spec.parallelism` 标志并行运行的 `Pod` 的个数，默认为 `1`
-> + `spec.activeDeadlineSeconds` 标志失败 `Pod` 的重试最大时间，超过这个时间不会继续重试 
+> + `spec.activeDeadlineSeconds` 标志失败 `Pod` 的重试最大时间，超过这个时间不会继续重试
 
 
 <details>
@@ -296,10 +296,10 @@ spec:
 + `.spec.jobTemplate`： `Job`模板，必需字段，指定需要运行的任务，格式同 `Job`
 + `.spec.startingDeadlineSeconds` ：启动 `Job` 的期限（秒级别） ，该字段是可选的。如果因为任何原因而错过了被调度的时间，那么错过执行时间的`Job`将被认为是失败的。如果没有指定，则没有期限
 + `.spec.concurrencyPolicy`：并发策略，该字段也是可选的。它指定了如何处理被 `Cron Job` 创建的 `Job` 的并发执行。只允许指定下面策略中的一种：
-	+ `Allow` （默认）：允许并发运行 `Job`
-	+ `Forbid`：禁止并发运行，如果前一个还没有完成，则直接跳过下一个
-	+ `Replace`：取消当前正在运行的 `Job`，用一个新的来替换
-		+ 注意，当前策略只能应用于同一个 `Cron Job` 创建的 `Job`。如果存在多个 `Cron Job`，它们创建的 `Job` 之间总是允许并发运行。
+    + `Allow` （默认）：允许并发运行 `Job`
+    + `Forbid`：禁止并发运行，如果前一个还没有完成，则直接跳过下一个
+    + `Replace`：取消当前正在运行的 `Job`，用一个新的来替换
+        + 注意，当前策略只能应用于同一个 `Cron Job` 创建的 `Job`。如果存在多个 `Cron Job`，它们创建的 `Job` 之间总是允许并发运行。
 + `.spec.suspend`：挂起，该字段也是可选的。如果设置为`true`，后续所有执行都会被挂起。它对已经开始执行的 `Job` 不起作用。默认值为 `false`
 + `.spec.successfulJobsHistoryLimit` 和 `.spec.failedJobsHistoryLimit`:历史限制，是可选的字段。它们指定了可以保留多少完成和失败的 `Job`。默认情况下，它们分别设置为`3`和`1`。设置限制的值为`0`，相关类型的 `Job` 完成后将不会被保留
 

@@ -46,73 +46,73 @@ func sumOfDistancesInTree(n int, edges [][]int) []int {
 
 ```go showLineNumbers
 func findMinHeightTrees(n int, edges [][]int) []int {
-	g := make([][]int, n)
-	for _, e := range edges {
-		x, y := e[0], e[1]
-		g[x] = append(g[x], y)
-		g[y] = append(g[y], x)
-	}
-	d1 := make([]int, n)
-	d2 := make([]int, n)
-	up := make([]int, n)
-	p := make([]int, n)
-	for i := range p {
-		p[i] = -1
-	}
-	var dfs1 func(cur, fa int) int
-	dfs1 = func(cur, fa int) int {
-		for _, ne := range g[cur] {
-			if ne == fa {
-				continue
-			}
-			h := dfs1(ne, cur) + 1
-			if h > d1[cur] {
-				d2[cur] = d1[cur]
-				d1[cur] = h
-				p[cur] = ne
-			} else if h > d2[cur] {
-				d2[cur] = h
-			}
-		}
-		return d1[cur]
-	}
-	var dfs2 func(cur, fa int)
-	dfs2 = func(cur, fa int) {
-		for _, ne := range g[cur] {
-			if ne == fa {
-				continue
-			}
-			if p[cur] != ne {
-				up[ne] = max(up[ne], d1[cur]+1)
-			} else {
-				up[ne] = max(up[ne], d2[cur]+1)
-			}
-			up[ne] = max(up[ne], up[cur]+1)
-			dfs2(ne, cur)
-		}
-	}
+    g := make([][]int, n)
+    for _, e := range edges {
+        x, y := e[0], e[1]
+        g[x] = append(g[x], y)
+        g[y] = append(g[y], x)
+    }
+    d1 := make([]int, n)
+    d2 := make([]int, n)
+    up := make([]int, n)
+    p := make([]int, n)
+    for i := range p {
+        p[i] = -1
+    }
+    var dfs1 func(cur, fa int) int
+    dfs1 = func(cur, fa int) int {
+        for _, ne := range g[cur] {
+            if ne == fa {
+                continue
+            }
+            h := dfs1(ne, cur) + 1
+            if h > d1[cur] {
+                d2[cur] = d1[cur]
+                d1[cur] = h
+                p[cur] = ne
+            } else if h > d2[cur] {
+                d2[cur] = h
+            }
+        }
+        return d1[cur]
+    }
+    var dfs2 func(cur, fa int)
+    dfs2 = func(cur, fa int) {
+        for _, ne := range g[cur] {
+            if ne == fa {
+                continue
+            }
+            if p[cur] != ne {
+                up[ne] = max(up[ne], d1[cur]+1)
+            } else {
+                up[ne] = max(up[ne], d2[cur]+1)
+            }
+            up[ne] = max(up[ne], up[cur]+1)
+            dfs2(ne, cur)
+        }
+    }
 
-	dfs1(0, -1)
-	dfs2(0, -1)
+    dfs1(0, -1)
+    dfs2(0, -1)
 
-	mi := math.MaxInt
-	ans := []int{}
-	for i := 0; i < n; i++ {
-		if h := max(d1[i], up[i]); h < mi {
-			mi = h
-			ans = nil
-			ans = append(ans, i)
-		} else if h == mi {
-			ans = append(ans, i)
-		}
-	}
-	return ans
+    mi := math.MaxInt
+    ans := []int{}
+    for i := 0; i < n; i++ {
+        if h := max(d1[i], up[i]); h < mi {
+            mi = h
+            ans = nil
+            ans = append(ans, i)
+        } else if h == mi {
+            ans = append(ans, i)
+        }
+    }
+    return ans
 }
 
 func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
+    if a > b {
+        return a
+    }
+    return b
 }
 ```

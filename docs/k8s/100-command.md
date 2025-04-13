@@ -13,8 +13,8 @@ kubectl get pod
 # -o wide 显示IP地址 显示节点 显示就绪状态 等等扩展信息
 # --show-labels 查看标签
 # -l 筛选标签，ex：
-# 	-l app
-# 	-l app=myapp
+#     -l app
+#     -l app=myapp
 # -w 监视
 # -o yaml 输出pod的yaml
 ```
@@ -29,7 +29,7 @@ kubectl exec -it pod-demo -c myapp-1 -- /bin/bash
 
 ```shell title='查看日志'
 # -c 指定当前容器名
-kubectl logs pod-demo -c myapp-1  
+kubectl logs pod-demo -c myapp-1
 ```
 
 ```shell title='查看帮助'
@@ -81,9 +81,9 @@ kubectl patch deployment deployment-demo -p '{"spec": {"strategy": {"rollingUpda
 kubectl patch deployment deployment-demo --patch '{"spec": {"template": {"spec":{"containers": [{"name": "deployment-demo-container", "image": "wangyanglinux/myapp: v2.0")]}}})' &&kubectl rollout pause deploy deployment-demo
 
 # rollout resume deploy deployment-demo 恢复滚动更新
-kubectl rollout resume deploy deployment-demo 
+kubectl rollout resume deploy deployment-demo
 
-kubectl rollout undo deploy/deployment-demo 
+kubectl rollout undo deploy/deployment-demo
 
 kubectl rollout status deployments nginx-deployment
 
