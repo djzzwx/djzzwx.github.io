@@ -3,12 +3,13 @@
 ```go showLineNumbers title="求组合数"
 const mod = 1000000007
 
-func comb(n, k int) int {
-	res := n
-	for i := 2; i <= k; i++ {
-		res = res * (n - i + 1) / i
+func comb(n, m int) int {
+	m = min(m, n-m)
+	res := 1
+	for i := 1; i <= m; i++ {
+		res = res * (n + 1 - i) / i
 	}
-	return res % mod
+	return res
 }
 ```
 
