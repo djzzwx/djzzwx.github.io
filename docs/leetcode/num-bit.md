@@ -1,6 +1,6 @@
 # 数位DP
 
-```go showLineNumbers
+```go showLineNumbers title="v1.0"
 func countSpecialNumbers(n int) (ans int) {
     s := strconv.Itoa(n)
     m := len(s)
@@ -47,12 +47,59 @@ func countSpecialNumbers(n int) (ans int) {
 }
 ```
 
-#### 相关题目
 
-[6957. 统计范围内的步进数字数目](https://leetcode.cn/problems/count-stepping-numbers-in-range/)
-[233. 数字 1 的个数（题解）](https://leetcode.cn/problems/number-of-digit-one/)
-[面试题 17.06. 2出现的次数（题解）](https://leetcode.cn/problems/number-of-2s-in-range-lcci/)
-[600. 不含连续1的非负整数（题解）](https://leetcode.cn/problems/non-negative-integers-without-consecutive-ones/)
-[902. 最大为 N 的数字组合（数位 DP 通用模板 33:22）](https://leetcode.cn/problems/numbers-at-most-n-given-digit-set/)
-[1012. 至少有 1 位重复的数字（题解）](https://leetcode.cn/problems/numbers-with-repeated-digits/)
-[1067. 范围内的数字计数](https://leetcode.cn/problems/digit-count-in-range/)
+```go showLineNumbers title="v2.0"
+func countNumbers(l string, r string, b int) int {
+	trans := func(s string) string {
+		v := &big.Int{}
+		fmt.Fscan(strings.NewReader(s), v)
+		return v.Text(b)
+	}
+
+	const mod int = 1e9 + 7
+
+	l = trans(l)
+	r = trans(r)
+
+	n := len(r)
+
+	l = strings.Repeat("0", n-len(l)) + l
+	b--
+
+	dp := make([][]int, n)
+	for i := range dp {
+		dp[i] = make([]int, 10)
+		for j := range dp[i] {
+			dp[i][j] = -1
+		}
+	}
+
+	var dfs func(int, int, bool, bool) int
+	dfs = func(i int, p int, b1 bool, b2 bool) (res int) {
+		if i == n {
+			return 1
+		}
+		if !b1 && !b2 {
+			v := &dp[i][p]
+			if *v >= 0 {
+				return *v
+			}
+			defer func() { *v = res }()
+		}
+		lo := 0
+		if b1 {
+			lo = int(l[i] - '0')
+		}
+		hi := b
+		if b2 {
+			hi = int(r[i] - '0')
+		}
+		for j := max(lo, p); j <= hi; j++ {
+			res += dfs(i+1, j, b1 && j == lo, b2 && j == hi)
+		}
+		res %= mod
+		return
+	}
+	return dfs(0, 0, true, true)
+}
+```
