@@ -92,3 +92,89 @@ func gcd(a, b int) int {
     return b
 }
 ```
+
+
+[3636. 查询超过阈值频率最高元素](https://leetcode.cn/problems/threshold-majority-queries/description/)
+```go showLineNumbers title="回滚莫队"
+func subarrayMajority(nums []int, queries [][]int) []int {
+    n, m := len(nums), len(queries)
+
+    cnt := map[int]int{}
+    maxCnt, minVal := 0, 0
+    // 添加元素 x
+    add := func(x int) {
+        cnt[x]++
+        c := cnt[x]
+        if c > maxCnt {
+            maxCnt, minVal = c, x
+        } else if c == maxCnt {
+            minVal = min(minVal, x)
+        }
+    }
+
+    ans := make([]int, m)
+    blockSize := int(math.Ceil(float64(n) / math.Sqrt(float64(m))))
+    type query struct{ bid, l, r, threshold, qid int } // [l,r) 左闭右开
+    qs := []query{}
+    for i, q := range queries {
+        l, r, threshold := q[0], q[1]+1, q[2] // 左闭右开
+        // 大区间离线（保证 l 和 r 不在同一个块中）
+        if r-l > blockSize {
+            qs = append(qs, query{l / blockSize, l, r, threshold, i})
+            continue
+        }
+        // 小区间暴力
+        for _, x := range nums[l:r] {
+            add(x)
+        }
+        if maxCnt >= threshold {
+            ans[i] = minVal
+        } else {
+            ans[i] = -1
+        }
+        // 重置数据
+        clear(cnt)
+        maxCnt = 0
+    }
+    slices.SortFunc(qs, func(a, b query) int {
+        if a.bid != b.bid {
+            return a.bid - b.bid
+        }
+        return a.r - b.r
+    })
+
+    var r int
+    for i, q := range qs {
+        l0 := (q.bid + 1) * blockSize
+        if i == 0 || q.bid > qs[i-1].bid { // 遍历到一个新的块
+            r = l0 // 右端点移动的起点
+            // 重置数据
+            clear(cnt)
+            maxCnt = 0
+        }
+
+        // 右端点从 r 移动到 q.r（q.r 不计入）
+        for ; r < q.r; r++ {
+            add(nums[r])
+        }
+
+        // 左端点从 l0 移动到 q.l（l0 不计入）
+        tmpMaxCnt, tmpMinVal := maxCnt, minVal
+        for _, x := range nums[q.l:l0] {
+            add(x)
+        }
+        if maxCnt >= q.threshold {
+            ans[q.qid] = minVal
+        } else {
+            ans[q.qid] = -1
+        }
+
+        // 回滚
+        maxCnt, minVal = tmpMaxCnt, tmpMinVal
+        for _, x := range nums[q.l:l0] {
+            cnt[x]--
+        }
+    }
+    return ans
+}
+```
