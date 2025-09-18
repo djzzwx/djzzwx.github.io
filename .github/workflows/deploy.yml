@@ -35,8 +35,8 @@ jobs:
       - name: Set up Qshell
         run: |
           wget https://github.com/qiniu/qshell/releases/download/v2.16.1/qshell-v2.16.1-linux-amd64.tar.gz
-          tar -xzf qshell-v2.5.0-linux-x64.tar.gz
-          mv qshell-v2.5.0-linux-x64/qshell /usr/local/bin/qshell
+          tar -xzf qshell-v2.16.1-linux-amd64.tar.gz
+          mv qshell-v2.16.1-linux-amd64/qshell /usr/local/bin/qshell
 
       - name: Upload to Qiniu
         run: |
