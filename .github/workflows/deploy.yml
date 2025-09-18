@@ -1,0 +1,28 @@
+name: Deploy to Qiniu
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install deps & Build
+        run: |
+          npm install
+          npm run build
+
+      - name: Upload to Qiniu
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/qiniu/qshell/master/install.sh | sh
+          ./qshell account ${{ secrets.QINIU_AK }} ${{ secrets.QINIU_SK }} myaccount
+          ./qshell qupload2 --src-dir=./build --bucket=djz-note
