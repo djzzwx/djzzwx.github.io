@@ -18,8 +18,8 @@ jobs:
 
       - name: Install deps & Build
         run: |
-          npm install
-          npm run build
+          pnpm install
+          pnpm build
 
       - name: Upload to Qiniu
         run: |
