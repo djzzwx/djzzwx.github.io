@@ -42,6 +42,4 @@ jobs:
       - name: Upload to Qiniu
         run: |
           qshell account ${{ secrets.QINIU_AK }} ${{ secrets.QINIU_SK }} github
-          qshell listbucket2 djz-note > list.txt
-          qshell batchdelete -i list.txt djz-note delete.log
-          qshell qupload2 --src-dir=./build --bucket=djz-note
+          qshell qupload2 --src-dir=./build --bucket=djz-note --overwrite
