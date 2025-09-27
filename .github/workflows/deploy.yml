@@ -42,4 +42,5 @@ jobs:
       - name: Upload to Qiniu
         run: |
           qshell account ${{ secrets.QINIU_AK }} ${{ secrets.QINIU_SK }} myaccount
+          qshell batchdelete --force djz-note
           qshell qupload2 --src-dir=./build --bucket=djz-note
