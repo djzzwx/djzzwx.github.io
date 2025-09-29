@@ -56,15 +56,15 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
-  deploy-to-qiniu:
-    name: Deploy to Qiniu
-    needs: build
+  deploy-qiniu:
+    name: Upload to Qiniu
+    needs: build   # 只依赖 build，不依赖 deploy
     runs-on: ubuntu-latest
     steps:
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
-          name: build-output
+          name: github-pages
           path: ./build
 
       - name: Set up Qshell
