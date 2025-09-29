@@ -65,7 +65,12 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: github-pages
-          path: ./build
+          path: ./artifact
+
+      - name: Extract build
+        run: |
+          mkdir -p build
+          tar -xf artifact/artifact.tar -C build
 
       - name: Set up Qshell
         run: |
