@@ -56,6 +56,31 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
+  deploy-to-qiniu:
+    name: Deploy to Qiniu
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build-output
+          path: ./build
+
+      - name: Set up Qshell
+        run: |
+          wget https://github.com/qiniu/qshell/releases/download/v2.16.1/qshell-v2.16.1-linux-amd64.tar.gz
+          tar -xzf qshell-v2.16.1-linux-amd64.tar.gz
+          mv qshell /usr/local/bin/qshell
+          chmod a+x /usr/local/bin/qshell
+
+      - name: Upload to Qiniu
+        run: |
+          qshell account ${{ secrets.QINIU_AK }} ${{ secrets.QINIU_SK }} github
+          qshell qupload2 --src-dir=./build --bucket=djz-note --overwrite
+          qshell listbucket2 djz-note | awk '{print "http://note-qn.her-sheep.top/"$1}' > list.txt
+          qshell cdnrefresh -i list.txt
+
 # name: Deploy to Qiniu
 
 # on:
