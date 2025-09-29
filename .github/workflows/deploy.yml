@@ -43,3 +43,5 @@ jobs:
         run: |
           qshell account ${{ secrets.QINIU_AK }} ${{ secrets.QINIU_SK }} github
           qshell qupload2 --src-dir=./build --bucket=djz-note --overwrite
+          qshell listbucket2 djz-note > list.txt
+          qshell cdnrefresh list.txt
