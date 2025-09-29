@@ -24,11 +24,15 @@ const config = {
   // If you aren't using GitHub pages, you don't need these.
   organizationName: 'djzzwx', // Usually your GitHub org/user name.
   projectName: 'djzzwx.github.io', // Usually your repo name.
-  deploymentBranch: 'gh-pages',
+  deploymentBranch: 'main',
   trailingSlash: false,
 
   onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'warn',
+    markdown: {
+    hooks: {
+      onBrokenMarkdownLinks: 'warn',
+    },
+  },
 
   // Even if you don't use internationalization, you can use this field to set
   // useful metadata like html lang. For example, if your site is Chinese, you
@@ -77,12 +81,6 @@ const config = {
             sidebarId: 'leetcode',
             position: 'left',
             label: 'leetcode',
-          },
-          {
-            type: 'docSidebar',
-            sidebarId: 'k8s',
-            position: 'left',
-            label: 'k8s',
           },
           {
             href: 'https://github.com/djzzwx/github-io',
