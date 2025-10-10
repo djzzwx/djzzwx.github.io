@@ -82,16 +82,12 @@ jobs:
           target: "/tmp/djzzwx-github-build"
           rm: true
 
-      # - name: Set up Qshell
-      #   run: |
-      #     wget https://github.com/qiniu/qshell/releases/download/v2.16.1/qshell-v2.16.1-linux-amd64.tar.gz
-      #     tar -xzf qshell-v2.16.1-linux-amd64.tar.gz
-      #     mv qshell /usr/local/bin/qshell
-      #     chmod a+x /usr/local/bin/qshell
-
-      # - name: Upload to Qiniu
-      #   run: |
-      #     qshell account ${{ secrets.QINIU_AK }} ${{ secrets.QINIU_SK }} github
-      #     qshell qupload2 --src-dir=./build --bucket=djz-note --overwrite
-      #     qshell listbucket2 djz-note | awk '{print "http://note-qn.her-sheep.top/"$1}' > list.txt
-      #     qshell cdnrefresh -i list.txt
+      - name: Move to Web
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.ALI_HOST }}
+          username: ${{ secrets.ALI_USERNAME }}
+          key: ${{ secrets.ALI_SSH_KEY }}
+          script: |
+            rm -rm /code/djzzwx
+            mv /tmp/djzzwx-github-build/build /code/djzzwx
