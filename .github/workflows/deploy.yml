@@ -89,5 +89,5 @@ jobs:
           username: ${{ secrets.ALI_USERNAME }}
           key: ${{ secrets.ALI_SSH_KEY }}
           script: |
-            rm -rm /code/djzzwx
+            rm -rf /code/djzzwx
             mv /tmp/djzzwx-github-build/build /code/djzzwx
